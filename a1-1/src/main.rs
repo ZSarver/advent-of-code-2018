@@ -16,12 +16,37 @@ fn main() {
     file.read_to_string(&mut s).unwrap();
     
     let line_iterator = s.lines();
-    let mut accum = 0;
+    let mut first_accum = 0;
     for line in line_iterator {
         match line.parse::<i64>() {
             Err(why) => panic!("couldn't parse line {}: {}", line, why.description()),
-            Ok(i) => accum += i,
+            Ok(i) => first_accum += i,
         };
     }
-    println!("{}", accum);
+    println!("{}", first_accum);
+
+    // now onto the second challenge
+    let mut accum_vec = Vec::new();
+    let mut accum = 0;
+    let mut result = 0;
+    while result == 0 {
+        for line in s.lines() {
+            accum += line.parse::<i64>().unwrap();
+            match find_in_vec(&accum_vec, &accum) {
+                None => {},
+                Some(v) => { result = v; break },
+            };
+            accum_vec.push(accum);
+        }
+    };
+    println!("{}", result);
+}
+
+fn find_in_vec(vec: &Vec<i64>, i: &i64) -> Option<i64> {
+    for item in vec.iter() {
+        if *item == *i {
+            return Some(*i);
+        }
+    }
+    return None;
 }
